@@ -1,10 +1,8 @@
-plugins {
-    id 'com.android.application'
-}
+﻿plugins { id "com.android.application" }
 
 android {
+    namespace "com.example.teekeytest"
     compileSdk 33
-
     defaultConfig {
         applicationId "com.example.teekeytest"
         minSdk 24
@@ -12,18 +10,15 @@ android {
         versionCode 1
         versionName "1.0"
     }
-
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
     }
-    namespace "com.example.teekeytest"
 }
-
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.9.0'
-    implementation 'androidx.biometric:biometric:1.2.0-alpha05'
+    implementation "androidx.appcompat:appcompat:1.6.1"
+    implementation "com.google.android.material:material:1.9.0"
+    implementation "androidx.biometric:biometric:1.2.0-alpha05"
 }
