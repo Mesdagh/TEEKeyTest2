@@ -1,24 +1,32 @@
-workflows:
+﻿workflows:
   android-app:
     name: Build Android APK
     max_build_duration: 10
     environment:
-      vars:
-        PACKAGE_NAME: "com.example.teekeytest"
       java: 17
     scripts:
+      - name: Diagnose repo contents
+        script: |
+          echo "PWD = $(pwd)"
+          echo "Repo tree (top level):"
+          ls -lah
+          echo "Wrapper dir listing:"
+          ls -lah gradle/wrapper || true
+          echo "gradlew first 30 lines:"
+          sed -n '1,30p' gradlew || true
       - name: Ensure Gradle wrapper JAR
         script: |
           mkdir -p gradle/wrapper
-          if [ ! -f gradle/wrapper/gradle-wrapper.jar ]; then
-            echo "Downloading gradle-wrapper.jar..."
-            curl -sSfLo gradle/wrapper/gradle-wrapper.jar \
+          if [ ! -s gradle/wrapper/gradle-wrapper.jar ]; then
+            echo "Downloading wrapper jar..."
+            curl -fL -o gradle/wrapper/gradle-wrapper.jar \
               https://raw.githubusercontent.com/gradle/gradle/v8.1.1/gradle/wrapper/gradle-wrapper.jar
           fi
-          ls -l gradle/wrapper
-          head -n 20 gradlew || true
+          echo "Wrapper dir after ensure:"
+          ls -lah gradle/wrapper
       - name: Build APK
         script: |
+          chmod +x gradlew
           ./gradlew --version
           ./gradlew assembleDebug
     artifacts:
