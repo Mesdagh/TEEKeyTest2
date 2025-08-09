@@ -1,4 +1,4 @@
-﻿workflows:
+workflows:
   android-app:
     name: Build Android APK
     max_build_duration: 10
