@@ -5,28 +5,20 @@
     environment:
       java: 17
     scripts:
-      - name: Diagnose repo contents
+      - name: Prepare Gradle locally (bootstrap)
         script: |
-          echo "PWD = $(pwd)"
-          ls -lah
-          echo "Wrapper dir listing:"
-          ls -lah gradle/wrapper || true
-          echo "gradlew first 20 lines:"
-          sed -n '1,20p' gradlew || true
-      - name: Ensure Gradle wrapper JAR
-        script: |
-          mkdir -p gradle/wrapper
-          if [ ! -s gradle/wrapper/gradle-wrapper.jar ]; then
-            echo "Downloading wrapper jar..."
-            curl -fL -o gradle/wrapper/gradle-wrapper.jar \
-              https://raw.githubusercontent.com/gradle/gradle/v8.1.1/gradle/wrapper/gradle-wrapper.jar
-          fi
-          echo "Verify wrapper jar contains WrapperMain:"
-          jar tf gradle/wrapper/gradle-wrapper.jar | grep "org/gradle/wrapper/GradleWrapperMain.class" || { echo "WrapperMain not found"; exit 1; }
-          ls -lah gradle/wrapper
+          set -e
+          echo "Downloading Gradle 8.1.1..."
+          curl -fL -o gradle.zip https://services.gradle.org/distributions/gradle-8.1.1-bin.zip
+          unzip -q gradle.zip
+          export GRADLE_HOME="$PWD/gradle-8.1.1"
+          echo "Generating wrapper with local Gradle..."
+          "$GRADLE_HOME/bin/gradle" wrapper --gradle-version 8.1.1
+          chmod +x gradlew
+          echo "Check wrapper JAR has WrapperMain:"
+          jar tf gradle/wrapper/gradle-wrapper.jar | grep "org/gradle/wrapper/GradleWrapperMain.class"
       - name: Build APK
         script: |
-          chmod +x gradlew
           ./gradlew --version
           ./gradlew assembleDebug
     artifacts:
