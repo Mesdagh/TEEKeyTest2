@@ -1,13 +1,18 @@
+cd C:\Users\client\Desktop\TEEKeyTest2
+
+# محتوای سالم gradlew
 $script = @"
 #!/usr/bin/env sh
 APP_HOME="$(cd "$(dirname "$0")"; pwd -P)"
 CLASSPATH="$APP_HOME/gradle/wrapper/gradle-wrapper.jar"
-if [ -z "$JAVA_HOME" ]; then
-  exec java -classpath "$CLASSPATH" org.gradle.wrapper.GradleWrapperMain "$@"
+if [ -n "$JAVA_HOME" ] ; then
+  JAVA_EXE="$JAVA_HOME/bin/java"
 else
-  exec "$JAVA_HOME/bin/java" -classpath "$CLASSPATH" org.gradle.wrapper.GradleWrapperMain "$@"
+  JAVA_EXE="java"
 fi
+exec "$JAVA_EXE" -classpath "$CLASSPATH" org.gradle.wrapper.GradleWrapperMain "$@"
 "@
-# ذخیره با LF و بدون BOM
+
+# ذخیره با Line Ending نوع LF و بدون BOM
 $script = $script -replace "`r`n","`n"
-Set-Content -Path gradlew -Value $script -Encoding ascii -NoNewline
+Set-Content -Path .\gradlew -Value $script -Encoding ascii -NoNewline
