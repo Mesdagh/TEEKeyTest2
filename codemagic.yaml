@@ -5,18 +5,28 @@
     environment:
       java: 17
     scripts:
-      - name: Prepare Wrapper (generate on runner)
+      - name: Diagnose repo contents
         script: |
-          if ! command -v gradle >/dev/null 2>&1; then
-            echo "Gradle not found on image"; exit 1
+          echo "PWD = $(pwd)"
+          ls -lah
+          echo "Wrapper dir listing:"
+          ls -lah gradle/wrapper || true
+          echo "gradlew first 20 lines:"
+          sed -n '1,20p' gradlew || true
+      - name: Ensure Gradle wrapper JAR
+        script: |
+          mkdir -p gradle/wrapper
+          if [ ! -s gradle/wrapper/gradle-wrapper.jar ]; then
+            echo "Downloading wrapper jar..."
+            curl -fL -o gradle/wrapper/gradle-wrapper.jar \
+              https://raw.githubusercontent.com/gradle/gradle/v8.1.1/gradle/wrapper/gradle-wrapper.jar
           fi
-          rm -rf gradle/wrapper gradlew
-          gradle wrapper --gradle-version 8.1.1
-          chmod +x gradlew
-          echo "Wrapper dir listing:" && ls -lah gradle/wrapper
-          echo "Check classes in wrapper JAR:" && jar tf gradle/wrapper/gradle-wrapper.jar | head -n 20
+          echo "Verify wrapper jar contains WrapperMain:"
+          jar tf gradle/wrapper/gradle-wrapper.jar | grep "org/gradle/wrapper/GradleWrapperMain.class" || { echo "WrapperMain not found"; exit 1; }
+          ls -lah gradle/wrapper
       - name: Build APK
         script: |
+          chmod +x gradlew
           ./gradlew --version
           ./gradlew assembleDebug
     artifacts:
