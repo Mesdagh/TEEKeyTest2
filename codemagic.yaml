@@ -7,8 +7,19 @@ workflows:
         PACKAGE_NAME: "com.example.teekeytest"
       java: 17
     scripts:
+      - name: Ensure Gradle wrapper JAR
+        script: |
+          mkdir -p gradle/wrapper
+          if [ ! -f gradle/wrapper/gradle-wrapper.jar ]; then
+            echo "Downloading gradle-wrapper.jar..."
+            curl -sSfLo gradle/wrapper/gradle-wrapper.jar \
+              https://raw.githubusercontent.com/gradle/gradle/v8.1.1/gradle/wrapper/gradle-wrapper.jar
+          fi
+          ls -l gradle/wrapper
+          head -n 20 gradlew || true
       - name: Build APK
         script: |
+          ./gradlew --version
           ./gradlew assembleDebug
     artifacts:
       - app/build/outputs/apk/debug/app-debug.apk
