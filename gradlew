@@ -1,34 +1,13 @@
+$script = @"
 #!/usr/bin/env sh
-
-##############################################################################
-##
-##  Gradle start up script for UN*X
-##
-##############################################################################
-
-# Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
-DEFAULT_JVM_OPTS=""
-
-APP_NAME="Gradle"
-APP_BASE_NAME=$(basename "$0")
-
-# Resolve links: $0 may be a link
-PRG="$0"
-while [ -h "$PRG" ]; do
-  ls=$(ls -ld "$PRG")
-  link=$(expr "$ls" : '.*-> \(.*\)$')
-  if expr "$link" : '/.*' > /dev/null; then
-    PRG="$link"
-  else
-    PRG=$(dirname "$PRG")"/$link"
-  fi
-done
-
-SAVED="$(pwd)"
-cd "$(dirname \"$PRG\")/.." >/dev/null
-APP_HOME="$(pwd -P)"
-cd "$SAVED" >/dev/null
-
-CLASSPATH=$APP_HOME/gradle/wrapper/gradle-wrapper.jar
-
-exec "$JAVA_HOME/bin/java" $DEFAULT_JVM_OPTS -classpath "$CLASSPATH" org.gradle.wrapper.GradleWrapperMain "$@"
+APP_HOME="$(cd "$(dirname "$0")"; pwd -P)"
+CLASSPATH="$APP_HOME/gradle/wrapper/gradle-wrapper.jar"
+if [ -z "$JAVA_HOME" ]; then
+  exec java -classpath "$CLASSPATH" org.gradle.wrapper.GradleWrapperMain "$@"
+else
+  exec "$JAVA_HOME/bin/java" -classpath "$CLASSPATH" org.gradle.wrapper.GradleWrapperMain "$@"
+fi
+"@
+# ذخیره با LF و بدون BOM
+$script = $script -replace "`r`n","`n"
+Set-Content -Path gradlew -Value $script -Encoding ascii -NoNewline
